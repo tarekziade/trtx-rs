@@ -316,6 +316,21 @@ make clippy     # Run lints
 make test       # Run tests
 ```
 
+### GPU Testing
+
+The project includes CI workflows for testing with real NVIDIA GPUs:
+
+- **Mock mode CI**: Runs on every push (ubuntu, macos) - tests API without GPU
+- **GPU tests**: Runs on self-hosted Windows runner with T4 GPU - tests real TensorRT-RTX
+
+To set up a GPU runner for real hardware testing, see [GPU Runner Setup Guide](.github/GPU_RUNNER_SETUP.md).
+
+The GPU tests workflow:
+- Builds without mock mode (uses real TensorRT-RTX)
+- Verifies CUDA and GPU availability
+- Runs tests and examples with actual GPU acceleration
+- Can be triggered manually or runs automatically on code changes
+
 ## Contributing
 
 Contributions are welcome! Please see [DESIGN.md](DESIGN.md) for architecture details.
