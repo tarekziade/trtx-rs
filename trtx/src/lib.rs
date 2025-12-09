@@ -84,12 +84,18 @@
 //! if TensorRT-RTX is not in a standard location.
 
 pub mod builder;
+pub mod cuda;
 pub mod error;
+pub mod executor;
 pub mod logger;
+pub mod onnx_parser;
 pub mod runtime;
 
 // Re-export commonly used types
 pub use builder::{Builder, BuilderConfig, NetworkDefinition};
+pub use cuda::{synchronize, DeviceBuffer};
 pub use error::{Error, Result};
+pub use executor::{run_onnx_with_tensorrt, run_onnx_zeroed, TensorInput, TensorOutput};
 pub use logger::{LogHandler, Logger, Severity, StderrLogger};
+pub use onnx_parser::OnnxParser;
 pub use runtime::{CudaEngine, ExecutionContext, Runtime};

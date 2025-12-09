@@ -190,3 +190,86 @@ int32_t trtx_execution_context_enqueue_v3(
 void trtx_free_buffer(void* buffer) {
     free(buffer);
 }
+
+// ONNX Parser mock implementations
+typedef struct { int dummy; } TrtxOnnxParser;
+
+int32_t trtx_onnx_parser_create(
+    void* network,
+    void* logger,
+    TrtxOnnxParser** out_parser,
+    char* error_msg,
+    size_t error_msg_len
+) {
+    *out_parser = malloc(sizeof(TrtxOnnxParser));
+    return 0;
+}
+
+void trtx_onnx_parser_destroy(TrtxOnnxParser* parser) {
+    free(parser);
+}
+
+int32_t trtx_onnx_parser_parse(
+    TrtxOnnxParser* parser,
+    const void* model_data,
+    size_t model_size,
+    char* error_msg,
+    size_t error_msg_len
+) {
+    // Mock: always succeeds
+    return 0;
+}
+
+// CUDA Memory Management mock implementations
+int32_t trtx_cuda_malloc(
+    void** ptr,
+    size_t size,
+    char* error_msg,
+    size_t error_msg_len
+) {
+    *ptr = malloc(size);
+    return *ptr ? 0 : 2; // 0 = success, 2 = out of memory
+}
+
+int32_t trtx_cuda_free(
+    void* ptr,
+    char* error_msg,
+    size_t error_msg_len
+) {
+    free(ptr);
+    return 0;
+}
+
+int32_t trtx_cuda_memcpy_host_to_device(
+    void* dst,
+    const void* src,
+    size_t size,
+    char* error_msg,
+    size_t error_msg_len
+) {
+    memcpy(dst, src, size);
+    return 0;
+}
+
+int32_t trtx_cuda_memcpy_device_to_host(
+    void* dst,
+    const void* src,
+    size_t size,
+    char* error_msg,
+    size_t error_msg_len
+) {
+    memcpy(dst, src, size);
+    return 0;
+}
+
+int32_t trtx_cuda_synchronize(
+    char* error_msg,
+    size_t error_msg_len
+) {
+    // Mock: nothing to synchronize
+    return 0;
+}
+
+void* trtx_cuda_get_default_stream() {
+    return NULL;
+}

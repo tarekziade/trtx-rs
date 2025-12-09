@@ -412,3 +412,170 @@ int32_t trtx_execution_context_enqueue_v3(
 void trtx_free_buffer(void* buffer) {
     free(buffer);
 }
+
+// ONNX Parser functions
+int32_t trtx_onnx_parser_create(
+    TrtxNetworkDefinition* network,
+    TrtxLogger* logger,
+    TrtxOnnxParser** out_parser,
+    char* error_msg,
+    size_t error_msg_len
+) {
+    if (!network || !logger || !out_parser) {
+        copy_error("Invalid arguments", error_msg, error_msg_len);
+        return TRTX_ERROR_INVALID_ARGUMENT;
+    }
+
+    TRTX_TRY_CATCH_BEGIN
+        auto* network_impl = reinterpret_cast<nvinfer1::INetworkDefinition*>(network);
+        auto* logger_impl = reinterpret_cast<LoggerImpl*>(logger);
+
+        auto* parser = nvonnxparser::createParser(*network_impl, *logger_impl);
+        if (!parser) {
+            copy_error("Failed to create ONNX parser", error_msg, error_msg_len);
+            return TRTX_ERROR_RUNTIME_ERROR;
+        }
+
+        *out_parser = reinterpret_cast<TrtxOnnxParser*>(parser);
+        return TRTX_SUCCESS;
+    TRTX_TRY_CATCH_END(error_msg, error_msg_len)
+}
+
+void trtx_onnx_parser_destroy(TrtxOnnxParser* parser) {
+    if (parser) {
+        auto* impl = reinterpret_cast<nvonnxparser::IParser*>(parser);
+        delete impl;
+    }
+}
+
+int32_t trtx_onnx_parser_parse(
+    TrtxOnnxParser* parser,
+    const void* model_data,
+    size_t model_size,
+    char* error_msg,
+    size_t error_msg_len
+) {
+    if (!parser || !model_data) {
+        copy_error("Invalid arguments", error_msg, error_msg_len);
+        return TRTX_ERROR_INVALID_ARGUMENT;
+    }
+
+    TRTX_TRY_CATCH_BEGIN
+        auto* parser_impl = reinterpret_cast<nvonnxparser::IParser*>(parser);
+
+        bool success = parser_impl->parse(model_data, model_size);
+        if (!success) {
+            // Get error from parser
+            int32_t num_errors = parser_impl->getNbErrors();
+            if (num_errors > 0) {
+                auto* first_error = parser_impl->getError(0);
+                copy_error(first_error->desc(), error_msg, error_msg_len);
+            } else {
+                copy_error("Failed to parse ONNX model", error_msg, error_msg_len);
+            }
+            return TRTX_ERROR_RUNTIME_ERROR;
+        }
+
+        return TRTX_SUCCESS;
+    TRTX_TRY_CATCH_END(error_msg, error_msg_len)
+}
+
+// CUDA Memory Management functions
+#include <cuda_runtime.h>
+
+int32_t trtx_cuda_malloc(
+    void** ptr,
+    size_t size,
+    char* error_msg,
+    size_t error_msg_len
+) {
+    if (!ptr) {
+        copy_error("Invalid arguments", error_msg, error_msg_len);
+        return TRTX_ERROR_INVALID_ARGUMENT;
+    }
+
+    cudaError_t err = cudaMalloc(ptr, size);
+    if (err != cudaSuccess) {
+        copy_error(cudaGetErrorString(err), error_msg, error_msg_len);
+        return TRTX_ERROR_CUDA_ERROR;
+    }
+
+    return TRTX_SUCCESS;
+}
+
+int32_t trtx_cuda_free(
+    void* ptr,
+    char* error_msg,
+    size_t error_msg_len
+) {
+    if (!ptr) {
+        return TRTX_SUCCESS; // Freeing null is not an error
+    }
+
+    cudaError_t err = cudaFree(ptr);
+    if (err != cudaSuccess) {
+        copy_error(cudaGetErrorString(err), error_msg, error_msg_len);
+        return TRTX_ERROR_CUDA_ERROR;
+    }
+
+    return TRTX_SUCCESS;
+}
+
+int32_t trtx_cuda_memcpy_host_to_device(
+    void* dst,
+    const void* src,
+    size_t size,
+    char* error_msg,
+    size_t error_msg_len
+) {
+    if (!dst || !src) {
+        copy_error("Invalid arguments", error_msg, error_msg_len);
+        return TRTX_ERROR_INVALID_ARGUMENT;
+    }
+
+    cudaError_t err = cudaMemcpy(dst, src, size, cudaMemcpyHostToDevice);
+    if (err != cudaSuccess) {
+        copy_error(cudaGetErrorString(err), error_msg, error_msg_len);
+        return TRTX_ERROR_CUDA_ERROR;
+    }
+
+    return TRTX_SUCCESS;
+}
+
+int32_t trtx_cuda_memcpy_device_to_host(
+    void* dst,
+    const void* src,
+    size_t size,
+    char* error_msg,
+    size_t error_msg_len
+) {
+    if (!dst || !src) {
+        copy_error("Invalid arguments", error_msg, error_msg_len);
+        return TRTX_ERROR_INVALID_ARGUMENT;
+    }
+
+    cudaError_t err = cudaMemcpy(dst, src, size, cudaMemcpyDeviceToHost);
+    if (err != cudaSuccess) {
+        copy_error(cudaGetErrorString(err), error_msg, error_msg_len);
+        return TRTX_ERROR_CUDA_ERROR;
+    }
+
+    return TRTX_SUCCESS;
+}
+
+int32_t trtx_cuda_synchronize(
+    char* error_msg,
+    size_t error_msg_len
+) {
+    cudaError_t err = cudaDeviceSynchronize();
+    if (err != cudaSuccess) {
+        copy_error(cudaGetErrorString(err), error_msg, error_msg_len);
+        return TRTX_ERROR_CUDA_ERROR;
+    }
+
+    return TRTX_SUCCESS;
+}
+
+void* trtx_cuda_get_default_stream() {
+    return nullptr; // nullptr represents the default CUDA stream
+}

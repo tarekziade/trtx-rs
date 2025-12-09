@@ -160,6 +160,65 @@ int32_t trtx_execution_context_enqueue_v3(
 // Utility functions
 void trtx_free_buffer(void* buffer);
 
+// ONNX Parser functions
+typedef struct TrtxOnnxParser TrtxOnnxParser;
+
+int32_t trtx_onnx_parser_create(
+    TrtxNetworkDefinition* network,
+    TrtxLogger* logger,
+    TrtxOnnxParser** out_parser,
+    char* error_msg,
+    size_t error_msg_len
+);
+
+void trtx_onnx_parser_destroy(TrtxOnnxParser* parser);
+
+int32_t trtx_onnx_parser_parse(
+    TrtxOnnxParser* parser,
+    const void* model_data,
+    size_t model_size,
+    char* error_msg,
+    size_t error_msg_len
+);
+
+// CUDA Memory Management functions
+int32_t trtx_cuda_malloc(
+    void** ptr,
+    size_t size,
+    char* error_msg,
+    size_t error_msg_len
+);
+
+int32_t trtx_cuda_free(
+    void* ptr,
+    char* error_msg,
+    size_t error_msg_len
+);
+
+int32_t trtx_cuda_memcpy_host_to_device(
+    void* dst,
+    const void* src,
+    size_t size,
+    char* error_msg,
+    size_t error_msg_len
+);
+
+int32_t trtx_cuda_memcpy_device_to_host(
+    void* dst,
+    const void* src,
+    size_t size,
+    char* error_msg,
+    size_t error_msg_len
+);
+
+int32_t trtx_cuda_synchronize(
+    char* error_msg,
+    size_t error_msg_len
+);
+
+// Helper function to get default CUDA stream (returns NULL for default stream)
+void* trtx_cuda_get_default_stream();
+
 #ifdef __cplusplus
 }
 #endif

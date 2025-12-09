@@ -125,6 +125,11 @@ pub struct TrtxExecutionContext {
     _unused: [u8; 0],
 }
 
+#[repr(C)]
+pub struct TrtxOnnxParser {
+    _unused: [u8; 0],
+}
+
 // Logger callback type
 pub type TrtxLoggerCallback = ::std::option::Option<
     unsafe extern "C" fn(
@@ -250,6 +255,62 @@ extern "C" {
     ) -> i32;
 
     pub fn trtx_free_buffer(buffer: *mut ::std::os::raw::c_void);
+
+    // ONNX Parser functions
+    pub fn trtx_onnx_parser_create(
+        network: *mut TrtxNetworkDefinition,
+        logger: *mut TrtxLogger,
+        out_parser: *mut *mut TrtxOnnxParser,
+        error_msg: *mut ::std::os::raw::c_char,
+        error_msg_len: usize,
+    ) -> i32;
+
+    pub fn trtx_onnx_parser_destroy(parser: *mut TrtxOnnxParser);
+
+    pub fn trtx_onnx_parser_parse(
+        parser: *mut TrtxOnnxParser,
+        model_data: *const ::std::os::raw::c_void,
+        model_size: usize,
+        error_msg: *mut ::std::os::raw::c_char,
+        error_msg_len: usize,
+    ) -> i32;
+
+    // CUDA Memory Management functions
+    pub fn trtx_cuda_malloc(
+        ptr: *mut *mut ::std::os::raw::c_void,
+        size: usize,
+        error_msg: *mut ::std::os::raw::c_char,
+        error_msg_len: usize,
+    ) -> i32;
+
+    pub fn trtx_cuda_free(
+        ptr: *mut ::std::os::raw::c_void,
+        error_msg: *mut ::std::os::raw::c_char,
+        error_msg_len: usize,
+    ) -> i32;
+
+    pub fn trtx_cuda_memcpy_host_to_device(
+        dst: *mut ::std::os::raw::c_void,
+        src: *const ::std::os::raw::c_void,
+        size: usize,
+        error_msg: *mut ::std::os::raw::c_char,
+        error_msg_len: usize,
+    ) -> i32;
+
+    pub fn trtx_cuda_memcpy_device_to_host(
+        dst: *mut ::std::os::raw::c_void,
+        src: *const ::std::os::raw::c_void,
+        size: usize,
+        error_msg: *mut ::std::os::raw::c_char,
+        error_msg_len: usize,
+    ) -> i32;
+
+    pub fn trtx_cuda_synchronize(
+        error_msg: *mut ::std::os::raw::c_char,
+        error_msg_len: usize,
+    ) -> i32;
+
+    pub fn trtx_cuda_get_default_stream() -> *mut ::std::os::raw::c_void;
 }
 "#;
 
