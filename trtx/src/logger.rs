@@ -138,11 +138,13 @@ mod tests {
     use super::*;
     use std::sync::{Arc, Mutex};
 
+    #[allow(dead_code)]
     #[derive(Clone)]
     struct TestLogger {
         messages: Arc<Mutex<Vec<(Severity, String)>>>,
     }
 
+    #[allow(dead_code)]
     impl TestLogger {
         fn new() -> Self {
             Self {

@@ -292,6 +292,30 @@ Ensure CUDA runtime is properly initialized before creating engines or contexts.
 **Invalid tensor addresses:**
 Verify that all tensor addresses point to valid CUDA device memory with correct sizes.
 
+## Development
+
+### Pre-commit Hooks
+
+To ensure code quality, set up the pre-commit hook:
+
+```bash
+cp .githooks/pre-commit .git/hooks/pre-commit
+chmod +x .git/hooks/pre-commit
+```
+
+The hook will automatically run `cargo fmt` and `cargo clippy` before each commit.
+
+### Manual Checks
+
+You can also run checks manually using the Makefile:
+
+```bash
+make check-all  # Run fmt, clippy, and tests
+make fmt        # Format code
+make clippy     # Run lints
+make test       # Run tests
+```
+
 ## Contributing
 
 Contributions are welcome! Please see [DESIGN.md](DESIGN.md) for architecture details.
