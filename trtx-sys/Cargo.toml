@@ -1,0 +1,21 @@
+[package]
+name = "trtx-sys"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Raw FFI bindings to NVIDIA TensorRT-RTX"
+links = "tensorrt-rtx"
+
+[build-dependencies]
+bindgen = "0.70"
+cc = "1.0"
+
+[features]
+default = []
+# Mock mode for development without TensorRT-RTX installed
+mock = []
+
+[dependencies]
+# Raw FFI - no dependencies

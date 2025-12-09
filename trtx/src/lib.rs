@@ -1,0 +1,95 @@
+//! Safe Rust bindings to NVIDIA TensorRT-RTX
+//!
+//! This crate provides safe, ergonomic Rust bindings to the TensorRT-RTX library
+//! for high-performance deep learning inference on NVIDIA GPUs.
+//!
+//! # Overview
+//!
+//! TensorRT-RTX enables efficient inference by:
+//! - Optimizing neural network graphs
+//! - Fusing layers and operations
+//! - Selecting optimal kernels for your hardware
+//! - Supporting dynamic shapes and batching
+//!
+//! # Workflow
+//!
+//! Using TensorRT-RTX typically follows two phases:
+//!
+//! ## Build Phase (Ahead-of-Time)
+//!
+//! 1. Create a [`Logger`] to capture TensorRT messages
+//! 2. Create a [`Builder`] to construct an optimized engine
+//! 3. Define your network using [`NetworkDefinition`]
+//! 4. Configure optimization with [`BuilderConfig`]
+//! 5. Build and serialize the engine to disk
+//!
+//! ## Inference Phase (Runtime)
+//!
+//! 1. Create a [`Runtime`] with a logger
+//! 2. Deserialize the engine using [`Runtime::deserialize_cuda_engine`]
+//! 3. Create an [`ExecutionContext`] from the engine
+//! 4. Bind input/output tensors
+//! 5. Execute inference with [`ExecutionContext::enqueue_v3`]
+//!
+//! # Example
+//!
+//! ```rust,no_run
+//! use trtx::{Logger, Builder, Runtime};
+//! use trtx::builder::{BuilderConfig, MemoryPoolType, network_flags};
+//!
+//! # fn main() -> Result<(), Box<dyn std::error::Error>> {
+//! // Create logger
+//! let logger = Logger::stderr()?;
+//!
+//! // Build phase
+//! let builder = Builder::new(&logger)?;
+//! let network = builder.create_network(network_flags::EXPLICIT_BATCH)?;
+//! let mut config = builder.create_config()?;
+//!
+//! // Configure memory
+//! config.set_memory_pool_limit(MemoryPoolType::Workspace, 1 << 30)?;
+//!
+//! // Build and serialize
+//! let engine_data = builder.build_serialized_network(&network, &config)?;
+//! std::fs::write("model.engine", &engine_data)?;
+//!
+//! // Inference phase
+//! let runtime = Runtime::new(&logger)?;
+//! let engine = runtime.deserialize_cuda_engine(&engine_data)?;
+//! let context = engine.create_execution_context()?;
+//!
+//! // List I/O tensors
+//! let num_tensors = engine.get_nb_io_tensors()?;
+//! for i in 0..num_tensors {
+//!     let name = engine.get_tensor_name(i)?;
+//!     println!("Tensor {}: {}", i, name);
+//! }
+//! # Ok(())
+//! # }
+//! ```
+//!
+//! # Safety
+//!
+//! This crate provides safe abstractions over the underlying C++ API. However,
+//! some operations (like setting tensor addresses and enqueueing inference)
+//! require careful management of CUDA memory and are marked as `unsafe`.
+//!
+//! # Prerequisites
+//!
+//! - NVIDIA TensorRT-RTX library installed
+//! - CUDA Runtime
+//! - Compatible NVIDIA GPU
+//!
+//! Set the `TENSORRT_RTX_DIR` environment variable to the installation path
+//! if TensorRT-RTX is not in a standard location.
+
+pub mod builder;
+pub mod error;
+pub mod logger;
+pub mod runtime;
+
+// Re-export commonly used types
+pub use builder::{Builder, BuilderConfig, NetworkDefinition};
+pub use error::{Error, Result};
+pub use logger::{LogHandler, Logger, Severity, StderrLogger};
+pub use runtime::{CudaEngine, ExecutionContext, Runtime};

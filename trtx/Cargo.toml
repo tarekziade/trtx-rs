@@ -1,0 +1,22 @@
+[package]
+name = "trtx"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Safe Rust bindings to NVIDIA TensorRT-RTX"
+keywords = ["tensorrt", "inference", "deep-learning", "nvidia", "gpu"]
+categories = ["api-bindings", "science"]
+
+[features]
+default = []
+# Mock mode for development without TensorRT-RTX installed
+mock = ["trtx-sys/mock"]
+
+[dependencies]
+trtx-sys.workspace = true
+thiserror = "2.0"
+
+[dev-dependencies]
+# For examples and tests
