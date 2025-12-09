@@ -1,5 +1,10 @@
 //! Safe Rust bindings to NVIDIA TensorRT-RTX
 //!
+//! ⚠️ **EXPERIMENTAL - NOT FOR PRODUCTION USE**
+//!
+//! This crate is in early experimental development. The API is unstable and will change.
+//! This is NOT production-ready software. Use at your own risk.
+//!
 //! This crate provides safe, ergonomic Rust bindings to the TensorRT-RTX library
 //! for high-performance deep learning inference on NVIDIA GPUs.
 //!

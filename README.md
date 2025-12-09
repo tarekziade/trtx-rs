@@ -1,5 +1,12 @@
 # trtx-rs
 
+> **⚠️ EXPERIMENTAL - NOT FOR PRODUCTION USE**
+>
+> This project is in early experimental development. The API is unstable and will change.
+> This is NOT production-ready software. Use at your own risk.
+>
+> Published on crates.io to reserve the crate names.
+
 Safe Rust bindings to [NVIDIA TensorRT-RTX](https://github.com/NVIDIA/TensorRT-RTX) for high-performance deep learning inference.
 
 ## Overview

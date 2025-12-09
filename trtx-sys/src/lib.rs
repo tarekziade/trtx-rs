@@ -1,5 +1,10 @@
 //! Raw FFI bindings to NVIDIA TensorRT-RTX
 //!
+//! ⚠️ **EXPERIMENTAL - NOT FOR PRODUCTION USE**
+//!
+//! This crate is in early experimental development. The API is unstable and will change.
+//! This is NOT production-ready software. Use at your own risk.
+//!
 //! This crate provides low-level, unsafe bindings to the TensorRT-RTX C++ library.
 //! For safe, ergonomic Rust API, use the `trtx` crate instead.
 //!

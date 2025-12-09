@@ -5,7 +5,8 @@ edition.workspace = true
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
-description = "Safe Rust bindings to NVIDIA TensorRT-RTX"
+description = "Safe Rust bindings to NVIDIA TensorRT-RTX (EXPERIMENTAL - NOT FOR PRODUCTION)"
+readme = "../README.md"
 keywords = ["tensorrt", "inference", "deep-learning", "nvidia", "gpu"]
 categories = ["api-bindings", "science"]
 
@@ -15,7 +16,7 @@ default = []
 mock = ["trtx-sys/mock"]
 
 [dependencies]
-trtx-sys.workspace = true
+trtx-sys = { version = "0.1.0", path = "../trtx-sys", default-features = false }
 thiserror = "2.0"
 
 [dev-dependencies]

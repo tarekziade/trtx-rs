@@ -5,8 +5,11 @@ edition.workspace = true
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
-description = "Raw FFI bindings to NVIDIA TensorRT-RTX"
+description = "Raw FFI bindings to NVIDIA TensorRT-RTX (EXPERIMENTAL - NOT FOR PRODUCTION)"
+readme = "../README.md"
 links = "tensorrt-rtx"
+keywords = ["tensorrt", "inference", "nvidia", "ffi"]
+categories = ["external-ffi-bindings"]
 
 [build-dependencies]
 bindgen = "0.70"
