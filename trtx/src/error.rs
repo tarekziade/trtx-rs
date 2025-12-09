@@ -48,7 +48,9 @@ impl Error {
         let msg = Self::parse_error_msg(error_msg);
 
         match code {
-            code if code == trtx_sys::TRTX_ERROR_INVALID_ARGUMENT as i32 => Error::InvalidArgument(msg),
+            code if code == trtx_sys::TRTX_ERROR_INVALID_ARGUMENT as i32 => {
+                Error::InvalidArgument(msg)
+            }
             code if code == trtx_sys::TRTX_ERROR_OUT_OF_MEMORY as i32 => Error::OutOfMemory(msg),
             code if code == trtx_sys::TRTX_ERROR_RUNTIME_ERROR as i32 => Error::Runtime(msg),
             code if code == trtx_sys::TRTX_ERROR_CUDA_ERROR as i32 => Error::Cuda(msg),

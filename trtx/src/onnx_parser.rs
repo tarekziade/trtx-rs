@@ -91,7 +91,10 @@ mod tests {
     #[ignore] // Requires GPU and TensorRT runtime - run with: cargo test --ignored test_onnx_parser_with_real_model
     fn test_onnx_parser_with_real_model() {
         // Load the test ONNX model (super-resolution-10.onnx from ONNX model zoo)
-        let model_path = concat!(env!("CARGO_MANIFEST_DIR"), "/tests/data/super-resolution-10.onnx");
+        let model_path = concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/tests/data/super-resolution-10.onnx"
+        );
         let model_bytes = std::fs::read(model_path).expect("Failed to read test ONNX model");
 
         let logger = Logger::stderr().unwrap();
@@ -104,6 +107,10 @@ mod tests {
         let result = parser.parse(&model_bytes);
 
         // Parse should succeed with a valid ONNX model
-        assert!(result.is_ok(), "Failed to parse ONNX model: {:?}", result.err());
+        assert!(
+            result.is_ok(),
+            "Failed to parse ONNX model: {:?}",
+            result.err()
+        );
     }
 }

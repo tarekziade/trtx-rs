@@ -29,7 +29,9 @@ fn main() {
             dir
         }
         Err(_) => {
-            println!("cargo:warning=TENSORRT_RTX_DIR not set, using default: /usr/local/tensorrt-rtx");
+            println!(
+                "cargo:warning=TENSORRT_RTX_DIR not set, using default: /usr/local/tensorrt-rtx"
+            );
             "/usr/local/tensorrt-rtx".to_string()
         }
     };
@@ -63,9 +65,7 @@ fn main() {
 
     // Build C++ wrapper
     let mut build = cc::Build::new();
-    build.cpp(true)
-        .file("wrapper.cpp")
-        .include(&include_dir);
+    build.cpp(true).file("wrapper.cpp").include(&include_dir);
 
     // Also include CUDA headers
     if let Ok(cuda_dir) = env::var("CUDA_ROOT") {
