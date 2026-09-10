@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.1+rtx1.6] - 2026-09-10
+
+This is a hotfix release to fix the `-rtx1.5` suffix on crates.io for the previous release.
+It should have been `-rtx1.6` corresponding to the supported TensorRT RTX version.
+
+### 🚀 Features
+
+- Allow setting GpuAllocator for Runtime (#139)
+- Add `Builder::set_gpu_allocator` (#140)
+
+### 💼 Other
+
+- *(trtexec-rs)* Switching back to RustNN main (#138)
+- Fix wrong version suffix from rtx1.5 to rtx1.6 (#141)
+
 ## [0.8.0+rtx1.6] - 2026-07-30
 
 See what's new in TensorRT RTX 1.6 https://docs.nvidia.com/deeplearning/tensorrt-rtx/latest/index.html#what-s-new-in-nvidia-tensorrt-rtx-1-6
